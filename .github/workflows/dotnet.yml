@@ -32,20 +32,20 @@ jobs:
         repository: coldacid/Gum
         path: Gum
 
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
-
-    - name: Set up NuGet
-      uses: NuGet/setup-nuget@v1.0.5
-
-    - name: Restore NuGet packages
-      run: nuget restore "Glue with All.sln"
-      working-directory: ${{ github.workspace }}\FlatRedBall\FRBDK\Glue
+    - name: Set .NET Core SDK
+      uses: actions/setup-dotnet@v1.8.0
+      with:
+        dotnet-version: 3.0.101
 
     - name: Build Glue with All
-      run: msbuild "Glue with All.sln" /p:Configuration=${{ matrix.configuration }}
-      # /p:Platform="${{ matrix.platform }}" /p:DeployOnBuild=true /p:PublishProfile=PublishProfile
+      run: dotnet build "Glue with All.sln" -r win-x86 -p:Configuration=${{ matrix.configuration }}
+      # -p:Platform="${{ matrix.platform }}" -p:DeployOnBuild=true -p:PublishProfile=PublishProfile
       working-directory: ${{ github.workspace }}\FlatRedBall\FRBDK\Glue
+
+    # While NpcWpf is a "non self-contained executable" we can't `dotnet publish` Glue
+    #- name: Publish Glue
+    #  run: dotnet publish GlueFormsCore.csproj -r win-x86 -p:Configuration=${{ matrix.configuration }}
+    #  working-directory: ${{ github.workspace }}\FlatRedBall\FRBDK\Glue\Glue
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2.2.3
