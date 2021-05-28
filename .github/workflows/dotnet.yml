@@ -1,0 +1,44 @@
+name: Build Glue
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+    
+  # Allows you to run this workflow manually from the Actions tab
+  # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Debug] #, Release]
+        platform: [x86]
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      
+    - name: Set up NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+      
+    - name: Restore NuGet packages
+      run: cd FRBDK\Glue && nuget restore "Glue with All.sln"
+
+    - name: Build Glue with All
+      run: cd FRBDK\Glue && msbuild "Glue with All.sln" /p:Configuration=${{ matrix.configuration }}
+      # /p:Platform="${{ matrix.platform }}" /p:DeployOnBuild=true /p:PublishProfile=PublishProfile
+      
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Glue
+        path: ${{ github.workspace }}\FRBDK\Glue\Glue\bin\${{ matrix.platform }}\${{ matrix.configuration }}\netcoreapp3.0
+      
+      
