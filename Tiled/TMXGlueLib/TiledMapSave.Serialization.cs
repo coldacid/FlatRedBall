@@ -208,7 +208,17 @@ namespace TMXGlueLib
                 //}
             }
 
-            foreach (var objectLayer in this.objectgroup)
+            foreach (var imageLayer in this.ImageLayers)
+            {
+                var image = imageLayer.ImageObject;
+
+                string fileName = image.Source;
+
+                // keep it relative
+                referencedFiles.Add(fileName);
+            }
+
+            foreach(var objectLayer in this.objectgroup)
             {
                 if (objectLayer.@object != null)
                 {
