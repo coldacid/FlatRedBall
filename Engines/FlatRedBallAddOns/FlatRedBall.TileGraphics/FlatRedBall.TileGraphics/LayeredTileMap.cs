@@ -535,6 +535,8 @@ namespace FlatRedBall.TileGraphics
                 mdb.AttachTo(toReturn, false);
                 mdb.Paste(newSprite);
                 mdb.Visible = imageLayer.IsVisible;
+                mdb.ParallaxMultiplierX = imageLayer.ParallaxX;
+                mdb.ParallaxMultiplierY = imageLayer.ParallaxY;
 
                 toReturn.mMapLists.Add(mdb);
             }
